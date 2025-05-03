@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding-top: 50px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .loading {
+            font-size: 24px;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Список элементов</h1>
+        <div id="loading" class="loading">Загрузка...</div>
+        <table id="data-table" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Имя</th>
+                    <th>Навыки</th>
+                    <th>Тип</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Функция для загрузки данных с API
+        async function fetchData() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/list');
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    const tableBody = document.querySelector('#data-table tbody');
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.name}</td>
+                            <td>${item.skill}</td>
+                            <td>${item.Type}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('data-table').style.display = 'table';
+                }
+            } catch (error) {
+                console.error('Ошибка при загрузке данных:', error);
+                document.getElementById('loading').textContent = 'Ошибка при загрузке данных.';
+            }
+        }
+
+        // Вызов функции при загрузке страницы
+        window.onload = fetchData;
+    </script>
+</body>
+</html>
